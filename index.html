@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CampusAI — your smart student helpdesk assistant." />
+  <title>CampusAI | Smart Student Helpdesk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="#home" aria-label="CampusAI home">
+        <span class="brand-icon" aria-hidden="true">✦</span>
+        <span>Campus<span class="brand-accent">AI</span></span>
+      </a>
+      <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+      <nav class="nav-links" id="navLinks">
+        <a class="nav-link active" href="#home">Home</a>
+        <a class="nav-link" href="#assistant">AI Assistant</a>
+        <a class="nav-link" href="#features">Features</a>
+        <a class="nav-link" href="#about">About</a>
+      </nav>
+      <a class="nav-cta" href="#assistant">Ask CampusAI <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+
+  <main id="home">
+    <section class="hero section-shell">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse-dot"></span> SMART STUDENT HELPDESK</div>
+        <h1>Your campus,<br /><span>one answer away.</span></h1>
+        <p class="hero-subtitle">College help, made simple with AI. Find answers to campus questions, whenever you need them.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#assistant">Ask AI Assistant <span>→</span></a>
+          <a class="button button-ghost" href="#quick-help">Explore FAQs</a>
+        </div>
+        <div class="hero-proof"><span class="avatar-stack"><i>🎓</i><i>💬</i><i>✨</i></span><span>Your helpful campus companion</span></div>
+      </div>
+      <div class="hero-art" aria-label="CampusAI assistant illustration">
+        <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+        <div class="floating-chip chip-top"><span>⚡</span> Quick answers</div>
+        <div class="floating-chip chip-bottom"><span class="green-dot"></span> Always ready to help</div>
+        <div class="bot-card">
+          <div class="bot-head"><div class="bot-avatar">✦</div><div><strong>CampusAI Assistant</strong><small><span class="green-dot"></span> Online · Ready to help</small></div><span class="head-dots">•••</span></div>
+          <div class="mini-chat">
+            <div class="mini-message assistant">Hi there! 👋 What can I help you find today?</div>
+            <div class="mini-message user">Where can I check my exam timetable?</div>
+            <div class="mini-message assistant">You can find exam updates in the official notices. I can help you find the right information!</div>
+          </div>
+          <div class="mini-input"><span>Ask your question...</span><span class="mini-send">↑</span></div>
+        </div>
+        <div class="sparkle sparkle-a">✦</div><div class="sparkle sparkle-b">✧</div>
+      </div>
+    </section>
+
+
+    <section class="trust-strip section-shell" aria-label="CampusAI benefits">
+      <div><span class="trust-icon">⚡</span><strong>Quick guidance</strong><small>Answers without the wait</small></div>
+      <div><span class="trust-icon">🛡️</span><strong>Privacy-minded</strong><small>Designed with privacy in mind</small></div>
+      <div><span class="trust-icon">🌙</span><strong>Anytime access</strong><small>Help whenever you need it</small></div>
+    </section>
+
+
+    <section class="assistant-section section-shell" id="assistant">
+      <div class="section-heading centered">
+        <div class="eyebrow">YOUR AI HELPDESK</div>
+        <h2>Let's get your question <span>answered.</span></h2>
+        <p>Ask in your own words or choose a topic to get started.</p>
+      </div>
+      <div class="chat-panel">
+        <div class="chat-header">
+          <div class="bot-avatar">✦</div>
+          <div class="chat-title"><strong>CampusAI Assistant</strong><small><span class="green-dot"></span> Demo assistant</small></div>
+          <button class="icon-button" id="clearChat" title="Clear conversation" aria-label="Clear conversation">↻</button>
+        </div>
+        <div class="chat-body" id="chatBody" aria-live="polite">
+          <div class="chat-date">TODAY</div>
+          <div class="message-row assistant-row"><div class="message-avatar">✦</div><div class="message assistant-message"><p>Hello! 👋 I'm your Smart Student Helpdesk Assistant.</p><p>I can help with common college questions. What would you like to know?</p><span class="message-time">CampusAI · Just now</span></div></div>
+        </div>
+        <div class="quick-prompts" id="quickPrompts" aria-label="Suggested questions">
+          <button class="prompt-chip" data-question="How can I check my attendance?">📅 Attendance</button>
+          <button class="prompt-chip" data-question="Where can I find the exam timetable?">📝 Exam timetable</button>
+          <button class="prompt-chip" data-question="What scholarships are available for students?">🎓 Scholarships</button>
+          <button class="prompt-chip" data-question="What documents are needed for admission?">📂 Admission</button>
+        </div>
+        <form class="chat-input-area" id="chatForm">
+          <label class="sr-only" for="chatInput">Type your question</label>
+          <input id="chatInput" type="text" placeholder="Ask a college-related question..." autocomplete="off" maxlength="500" />
+          <span class="input-hint">Enter to send</span>
+          <button class="send-button" type="submit" aria-label="Send message">↑</button>
+        </form>
+        <div class="chat-disclaimer">Demo responses are illustrative. Confirm important information with official college notices.</div>
+      </div>
+    </section>
+
+
+    <section class="quick-help section-shell" id="quick-help">
+      <div class="section-heading">
+        <div class="eyebrow">EXPLORE HELP</div>
+        <h2>What do you need help with?</h2>
+        <p>Choose a category to start with a common question.</p>
+      </div>
+      <div class="help-grid">
+        <button class="help-card" data-question="Can you help me find academic information and syllabus details?"><span class="help-icon blue">📚</span><span class="help-card-title">Academic support</span><span class="help-card-desc">Subjects, syllabus and learning resources</span><span class="card-arrow">↗</span></button>
+        <button class="help-card" data-question="Where can I find exam dates, timetable and exam rules?"><span class="help-icon teal">🗓️</span><span class="help-card-title">Examinations</span><span class="help-card-desc">Timetable, exam rules and notices</span><span class="card-arrow">↗</span></button>
+        <button class="help-card" data-question="Where can I find fee details and scholarship information?"><span class="help-icon purple">💳</span><span class="help-card-title">Fees & scholarships</span><span class="help-card-desc">Payments, financial aid and scholarships</span><span class="card-arrow">↗</span></button>
+        <button class="help-card" data-question="What is the admission process and what documents are needed?"><span class="help-icon orange">🏫</span><span class="help-card-title">Admissions</span><span class="help-card-desc">Courses, process and required documents</span><span class="card-arrow">↗</span></button>
+      </div>
+    </section>
+
+
+    <section class="features-section" id="features">
+      <div class="section-shell">
+        <div class="section-heading centered">
+          <div class="eyebrow">MADE FOR STUDENTS</div>
+          <h2>A simpler way to get <span>student support.</span></h2>
+          <p>Helpful features, thoughtfully designed around student needs.</p>
+        </div>
+        <div class="features-grid">
+          <article class="feature-card"><div class="feature-icon blue">✧</div><h3>Instant guidance</h3><p>Find useful answers to common questions in a conversational way.</p></article>
+          <article class="feature-card"><div class="feature-icon teal">♧</div><h3>Privacy first</h3><p>We aim to keep the experience privacy-conscious and avoid unnecessary personal data.</p></article>
+          <article class="feature-card"><div class="feature-icon purple">◷</div><h3>Anytime access</h3><p>Explore help topics even when the campus office is closed.</p></article>
+          <article class="feature-card"><div class="feature-icon orange">▤</div><h3>Useful information</h3><p>Organized college information that can be easier to find and understand.</p></article>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="trust-section section-shell" id="about">
+      <div class="trust-card"><div class="trust-shield">🛡️</div><div><div class="eyebrow">AI WITH RESPONSIBILITY</div><h2>Helpful answers.<br /><span>Honest limitations.</span></h2><p>CampusAI is designed to make information easier to find. AI can make mistakes or have outdated information, so please verify important dates, rules and decisions with official college sources.</p><a href="#assistant" class="text-link">Ask your question <span>→</span></a></div></div>
+    </section>
+  </main>
+
+
+  <footer class="site-footer">
+    <div class="footer-main section-shell"><a class="brand footer-brand" href="#home"><span class="brand-icon">✦</span><span>Campus<span class="brand-accent">AI</span></span></a><p>Your campus, one answer away.</p><div class="footer-links"><a href="#home">Home</a><a href="#assistant">AI Assistant</a><a href="#features">Features</a><a href="#about">About</a></div></div>
+    <div class="footer-bottom section-shell"><span>© <span id="year"></span> CampusAI · Student Helpdesk Prototype</span><span>AI · Cybersecurity · Digital Trust</span></div>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
