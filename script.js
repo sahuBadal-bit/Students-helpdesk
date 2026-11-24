@@ -7,47 +7,11 @@ const quickPrompts = document.getElementById('quickPrompts');
 const menuToggle = document.getElementById('menuToggle');
 const navLinks = document.getElementById('navLinks');
 
+// Backend API URL
+const API_URL = 'http://localhost:3000/api/chat';
+
 // Automatically update footer year
 document.getElementById('year').textContent = new Date().getFullYear();
-
-// Demo chatbot responses (not real AI yet)
-function getDemoReply(question) {
-  const q = question.toLowerCase();
-
-  if (q.includes('attendance')) {
-    return 'Attendance requirements can vary by course and college policy. Please check your official attendance record or ask your department office for the current requirement.';
-  }
-
-  if (q.includes('exam') || q.includes('timetable') || q.includes('schedule')) {
-    return 'Exam schedules and timetable updates are usually shared through official college notices or the examination department. Please check the latest notice to confirm dates.';
-  }
-
-  if (q.includes('scholarship') || q.includes('financial aid')) {
-    return 'Scholarship eligibility, documents and deadlines depend on the specific scheme. Check your college scholarship desk and the official scholarship portal for current details.';
-  }
-
-  if (q.includes('admission') || q.includes('document')) {
-    return 'Admission requirements may differ by course. Commonly requested documents include academic marksheets, identity proof, photographs and applicable certificates. Please confirm the current list with the admissions office.';
-  }
-
-  if (q.includes('fee') || q.includes('payment')) {
-    return 'For exact fee amounts, payment deadlines and receipts, please refer to the college fee notice or accounts office. I do not have verified live fee information in this demo';
-  }
-
-  if (q.includes('library')) {
-    return 'For library hours, membership rules and book availability, please check the library notice or contact the library desk. This demo does not have live library records';
-  }
-
-  if (q.includes('contact') || q.includes('office') || q.includes('help')) {
-    return 'For an official or personal matter, please contact the relevant college office or department directly. Add the college’s verified contact details to this helpdesk when setting up the project';
-  }
-
-  if (q.includes('hello') || q.includes('hi') || q.includes('hey')) {
-    return 'Hello! 😊 What college-related question can I help you with today? Try asking about exams, attendance, admission, scholarships or fees';
-  }
-
-  return 'I can help with general college topics like exams, attendance, admission, scholarships, fees and campus facilities. I do not have verified information for that exact question yet. Please check with the relevant college office for an official answer';
-}
 
 // Add a message to the chat
 function addMessage(text, sender) {
@@ -70,9 +34,11 @@ function addMessage(text, sender) {
 
   const time = document.createElement('span');
   time.className = 'message-time';
-  time.textContent = sender === 'user' ? 'You · Just now' : 'CampusAI · Demo reply';
-  bubble.appendChild(time);
+  time.textContent = sender === 'user'
+    ? 'You · Just now'
+    : 'CampusAI · Backend reply';
 
+  bubble.appendChild(time);
   row.appendChild(bubble);
   chatBody.appendChild(row);
   chatBody.scrollTop = chatBody.scrollHeight;
@@ -105,8 +71,13 @@ function showTyping() {
   chatBody.scrollTop = chatBody.scrollHeight;
 }
 
-// Send a question
-function sendQuestion(question) {
+// Remove typing indicator
+function removeTyping() {
+  document.getElementById('typingRow')?.remove();
+}
+
+// Send a question to the backend
+async function sendQuestion(question) {
   const trimmed = question.trim();
   if (!trimmed) return;
 
@@ -116,10 +87,35 @@ function sendQuestion(question) {
 
   showTyping();
 
-  window.setTimeout(() => {
-    document.getElementById('typingRow')?.remove();
-    addMessage(getDemoReply(trimmed), 'assistant');
-  }, 650);
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message: trimmed })
+    });
+
+    const data = await response.json();
+
+    removeTyping();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Something went wrong.');
+    }
+
+    addMessage(data.reply, 'assistant');
+
+  } catch (error) {
+    removeTyping();
+
+    console.error('CampusAI API Error:', error);
+
+    addMessage(
+      'I could not connect to the CampusAI server. Please make sure the backend is running and try again.',
+      'assistant'
+    );
+  }
 }
 
 // Submit form
@@ -134,6 +130,7 @@ document.addEventListener('click', (event) => {
 
   if (promptButton) {
     sendQuestion(promptButton.dataset.question);
+
     document.getElementById('assistant').scrollIntoView({
       behavior: 'smooth',
       block: 'start'
@@ -171,16 +168,42 @@ clearChatButton.addEventListener('click', () => {
   chatInput.focus();
 });
 
-// Mobile menu
-menuToggle.addEventListener('click', () => {
-  const isOpen = navLinks.classList.toggle('open');
-  menuToggle.setAttribute('aria-expanded', String(isOpen));
-});
+// Sliding sidebar navigation
+const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+const sidebarClose = document.getElementById('sidebarClose');
 
-// Close mobile menu when a link is clicked
+function openSidebar() {
+  navLinks.classList.add('open');
+  sidebarBackdrop.classList.add('open');
+  navLinks.setAttribute('aria-hidden', 'false');
+  menuToggle.setAttribute('aria-expanded', 'true');
+  menuToggle.setAttribute('aria-label', 'Close navigation');
+  document.body.classList.add('sidebar-open');
+}
+
+function closeSidebar() {
+  navLinks.classList.remove('open');
+  sidebarBackdrop.classList.remove('open');
+  navLinks.setAttribute('aria-hidden', 'true');
+  menuToggle.setAttribute('aria-expanded', 'false');
+  menuToggle.setAttribute('aria-label', 'Open navigation');
+  document.body.classList.remove('sidebar-open');
+}
+
+menuToggle.addEventListener('click', () => {
+  navLinks.classList.contains('open') ? closeSidebar() : openSidebar();
+});
+sidebarClose.addEventListener('click', closeSidebar);
+sidebarBackdrop.addEventListener('click', closeSidebar);
+
 navLinks.querySelectorAll('a').forEach((link) => {
   link.addEventListener('click', () => {
-    navLinks.classList.remove('open');
-    menuToggle.setAttribute('aria-expanded', 'false');
+    navLinks.querySelectorAll('a').forEach((item) => item.classList.remove('active'));
+    link.classList.add('active');
+    closeSidebar();
   });
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && navLinks.classList.contains('open')) closeSidebar();
 });
