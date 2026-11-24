@@ -8,10 +8,99 @@ const menuToggle = document.getElementById('menuToggle');
 const navLinks = document.getElementById('navLinks');
 
 // Backend API URL
-const API_URL = 'http://localhost:3000/api/chat';
+const API_URL = window.CAMPUSAI_API_URL ||
+  (['localhost', '127.0.0.1'].includes(window.location.hostname)
+    ? 'http://localhost:3000/api/chat'
+    : '/api/chat');
 
 // Automatically update footer year
 document.getElementById('year').textContent = new Date().getFullYear();
+
+function appendInlineFormatting(container, text) {
+  const tokenPattern = /\*\*([^*]+)\*\*|\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)|(https?:\/\/[^\s)]+)/g;
+  let cursor = 0;
+  let match;
+
+  while ((match = tokenPattern.exec(text)) !== null) {
+    container.appendChild(document.createTextNode(text.slice(cursor, match.index)));
+
+    if (match[1]) {
+      const strong = document.createElement('strong');
+      strong.textContent = match[1];
+      container.appendChild(strong);
+    } else {
+      const bareUrl = match[4];
+      const href = match[3] || bareUrl.replace(/[.,!?;:]+$/, '');
+      const link = document.createElement('a');
+
+      link.href = href;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = match[2] || href;
+      container.appendChild(link);
+      if (!match[2] && href !== bareUrl) {
+        container.appendChild(document.createTextNode(bareUrl.slice(href.length)));
+      }
+    }
+
+    cursor = tokenPattern.lastIndex;
+  }
+
+  container.appendChild(document.createTextNode(text.slice(cursor)));
+}
+
+function renderAssistantReply(container, text) {
+  const lines = text
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)\s*\(\2\)/g, '[$1]($2)')
+    .split(/\r?\n/);
+  let paragraphLines = [];
+  let list = null;
+  let listType = '';
+
+  function flushParagraph() {
+    if (!paragraphLines.length) return;
+    const paragraph = document.createElement('p');
+    appendInlineFormatting(paragraph, paragraphLines.join(' '));
+    container.appendChild(paragraph);
+    paragraphLines = [];
+  }
+
+  function closeList() {
+    if (!list) return;
+    container.appendChild(list);
+    list = null;
+    listType = '';
+  }
+
+  lines.forEach((line) => {
+    const item = line.match(/^\s*(?:[-*]\s+|(\d+)[.)]\s+)(.*)$/);
+
+    if (item) {
+      flushParagraph();
+      const nextListType = item[1] ? 'ol' : 'ul';
+      if (listType !== nextListType) closeList();
+      if (!list) {
+        list = document.createElement(nextListType);
+        listType = nextListType;
+      }
+
+      const listItem = document.createElement('li');
+      appendInlineFormatting(listItem, item[2]);
+      list.appendChild(listItem);
+      return;
+    }
+
+    closeList();
+    if (line.trim()) {
+      paragraphLines.push(line.trim());
+    } else {
+      flushParagraph();
+    }
+  });
+
+  flushParagraph();
+  closeList();
+}
 
 // Add a message to the chat
 function addMessage(text, sender) {
@@ -28,9 +117,13 @@ function addMessage(text, sender) {
   const bubble = document.createElement('div');
   bubble.className = `message ${sender === 'user' ? 'user-message' : 'assistant-message'}`;
 
-  const paragraph = document.createElement('p');
-  paragraph.textContent = text;
-  bubble.appendChild(paragraph);
+  if (sender === 'assistant') {
+    renderAssistantReply(bubble, text);
+  } else {
+    const paragraph = document.createElement('p');
+    paragraph.textContent = text;
+    bubble.appendChild(paragraph);
+  }
 
   const time = document.createElement('span');
   time.className = 'message-time';
@@ -158,7 +251,7 @@ clearChatButton.addEventListener('click', () => {
   bubble.className = 'message assistant-message';
 
   const p = document.createElement('p');
-  p.textContent = 'Hello again! 👋 What would you like to know?';
+  p.textContent = 'Hello again! 👋 Ask me about B. K. Birla College admissions, courses, fees, scholarships, exams, or campus services.';
 
   bubble.appendChild(p);
   row.append(avatar, bubble);

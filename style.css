@@ -19,6 +19,10 @@
   transition:background .2s,border-color .2s,transform .2s
 }
 .menu-toggle:hover{background:var(--soft-blue);border-color:#c7d8ff}
+.assistant-message a{color:var(--blue);text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}
+.assistant-message ul,.assistant-message ol{margin:8px 0;padding-left:22px}
+.assistant-message li+li{margin-top:4px}
+.assistant-message strong{font-weight:700;color:var(--navy)}
 .sidebar-backdrop{
   position:fixed;inset:0;z-index:90;background:rgba(10,20,38,.48);
   opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s
